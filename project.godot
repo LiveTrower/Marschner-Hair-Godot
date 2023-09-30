@@ -17,3 +17,5 @@ config/icon="res://icon.svg"
 [rendering]
 
 lights_and_shadows/directional_shadow/size=8192
+anti_aliasing/quality/use_taa=true
+anti_aliasing/quality/use_debanding=true
