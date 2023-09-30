@@ -129,5 +129,5 @@ void light(){
 	vec3 specular = getSpecularMarschner(L, V, B, ALBEDO, 1.0, 0.0, UV);
 	
 	DIFFUSE_LIGHT += diffuse;
-	SPECULAR_LIGHT += specular * ATTENUATION;
+	SPECULAR_LIGHT += specular * LIGHT_COLOR * ATTENUATION * SPECULAR_AMOUNT;
 }
