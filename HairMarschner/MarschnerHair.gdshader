@@ -1,25 +1,29 @@
-shader_type spatial;
 //Credits
 //https://github.com/maajor/Marschner-Hair-Unity
+shader_type spatial;
 render_mode cull_disabled;
 
 #include "HairBxDF.gdshaderinc"
 
-uniform sampler2D _MainTex : hint_default_white;
-uniform sampler2D _Flowmap : hint_default_white;
-uniform vec4 _RootColor : source_color = vec4(0,0,0,1);
-uniform vec4 _TipColor : source_color = vec4(0,0,0,1);
-uniform vec4 _ColorVariationRange = vec4(0,0,0,1);
-uniform float _EccentricityMean = 0.07;
-uniform float _Roughness : hint_range(0.0, 1.0, 0.01);
-uniform vec3 diffuseColor : source_color = vec3(1.0);
+uniform sampler2D diffuse_tex : source_color;
+uniform sampler2D property_tex : hint_default_white;
+uniform sampler2D flowmap : hint_default_white;
+uniform vec3 root_color : source_color = vec3(0,0,0);
+uniform vec3 tip_color : source_color = vec3(0,0,0);
+uniform vec4 color_variation_range = vec4(0,0,0,1);
+uniform float eccentricity_mean = 0.07;
+uniform float roughness : hint_range(0.0, 1.0, 0.01)  = 0.5;
+uniform vec3 diffuse_color : source_color = vec3(1.0);
+uniform float tangent_amplitude : hint_range(0.0, 0.3, 0.01) = 0.15;
 uniform float scatter = 1.0;
+uniform bool use_flow_map = false;
+uniform bool use_diffuse_texture = false;
 
 varying vec3 binormal;
 
-vec3 getAmbientAndDiffuse(vec3 lightColor, mediump vec3 N, vec3 L, vec3 V, float attenuation)
+vec3 getAmbientAndDiffuse(vec3 light_color, mediump vec3 N, vec3 L, vec3 V, float attenuation)
 {
-	vec3 albedo = lightColor * diffuseColor;
+	vec3 albedo = light_color * diffuse_color;
 	float KajiyaDiffuse = 1.0 - abs(dot(N, L));
 	
 	vec3 FakeNormal = normalize(V - N * dot(V, N));
@@ -38,7 +42,7 @@ vec3 getAmbientAndDiffuse(vec3 lightColor, mediump vec3 N, vec3 L, vec3 V, float
 vec3 getSpecularMarschner(vec3 L, vec3 V, vec3 N, vec3 albedo, float Backlit, float Area, vec2 uv)
 {
 	vec3 S = vec3(0.0);
-	vec4 property = texture(_MainTex, uv);
+	vec4 property = texture(property_tex, uv);
 
 	float VoL = dot(V, L);
 	float SinThetaL = dot(N, L);
@@ -61,15 +65,15 @@ vec3 getSpecularMarschner(vec3 L, vec3 V, vec3 N, vec3 albedo, float Backlit, fl
 		Shift, //0.0499f,
 		Shift * 4.0 // 0.1996
 	};
-	float roughness = clamp(_Roughness, 1.0/255.0f, 1.0f);
+	float roug = clamp(roughness, 1.0/255.0f, 1.0f);
 	float B[] =
 	{
-		Area + square(roughness),
-		Area + square(roughness) / 2.0,
-		Area + square(roughness) * 2.0
+		Area + square(roug),
+		Area + square(roug) / 2.0,
+		Area + square(roug) * 2.0
 	};
 
-	float eccentric = mix(0.0f, _EccentricityMean * 2.0, property.r);
+	float eccentric = mix(0.0f, eccentricity_mean * 2.0, property.r);
 	float hairIOF = HairIOF(eccentric);
 	float F0 = square((1.0 - hairIOF) / (1.0 + hairIOF));
 
@@ -109,14 +113,27 @@ vec3 getSpecularMarschner(vec3 L, vec3 V, vec3 N, vec3 albedo, float Backlit, fl
 }
 
 void fragment(){
-	mediump vec4 flowmap = texture(_Flowmap, UV);
-	mediump vec4 property = texture(_MainTex, UV);
-	vec3 basecolor = mix(_RootColor.rgb, _TipColor.rgb, property.b);
+	vec3 albedo_texture = texture(diffuse_tex, UV).rgb;
+	mediump vec4 property = texture(property_tex, UV);
+	vec3 basecolor = mix(root_color.rgb, tip_color.rgb, property.b);
 	vec3 basecolorHSV = rgb2hsv(basecolor);
-	basecolorHSV += (property.g - 0.5) * _ColorVariationRange.rgb * _ColorVariationRange.a;
-	ALBEDO = hsv2rgb(basecolorHSV);
+	basecolorHSV += (property.g - 0.5) * color_variation_range.rgb * color_variation_range.a;
+	if(use_diffuse_texture){
+		ALBEDO = albedo_texture;
+	} else {
+		ALBEDO = hsv2rgb(basecolorHSV);
+	}
 	ALPHA = property.a;
+	//ALPHA_SCISSOR_THRESHOLD = 0.5;
 	ALPHA_HASH_SCALE = 0.01;
+	if(use_flow_map){
+		mediump vec3 flow = texture(flowmap, UV).rgb;
+		BINORMAL.xz += flow.rb * 2.0f - 1.0;
+	} else {
+		// Automatic Tangent Mapping
+		float offset = property.g * 2.0 * tangent_amplitude - tangent_amplitude;
+		BINORMAL.z += offset;
+	}
 	binormal = BINORMAL;
 }
 
