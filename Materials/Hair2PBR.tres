@@ -1,0 +1,20 @@
+[gd_resource type="ShaderMaterial" load_steps=4 format=3 uid="uid://b06d1v7fuoixb"]
+
+[ext_resource type="Shader" path="res://Shaders/MarschnerHair.gdshader" id="1_usrvv"]
+[ext_resource type="Texture2D" uid="uid://cce6ycik7vh03" path="res://Models/Textures/Hair2_Flow.tga" id="2_dnb58"]
+[ext_resource type="Texture2D" uid="uid://dfg3puhvi8n83" path="res://Models/Textures/Hair2_Property.tga" id="3_657bf"]
+
+[resource]
+render_priority = 0
+shader = ExtResource("1_usrvv")
+shader_parameter/root_color = Color(0.188235, 0.0980392, 0.0352941, 1)
+shader_parameter/tip_color = Color(0.447059, 0.294118, 0.196078, 1)
+shader_parameter/use_diffuse_texture = false
+shader_parameter/scatter = 3.0
+shader_parameter/tangent_amplitude = 0.15
+shader_parameter/use_flow_map = true
+shader_parameter/property_tex = ExtResource("3_657bf")
+shader_parameter/flowmap = ExtResource("2_dnb58")
+shader_parameter/eccentricity_mean = 0.07
+shader_parameter/specular = 0.5
+shader_parameter/roughness = 0.35

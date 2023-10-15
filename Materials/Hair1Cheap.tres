@@ -1,0 +1,24 @@
+[gd_resource type="ShaderMaterial" load_steps=5 format=3 uid="uid://sal8ujnnm70n"]
+
+[ext_resource type="Shader" path="res://Shaders/KajiyaKayHair.gdshader" id="1_hhrku"]
+[ext_resource type="Texture2D" uid="uid://dgtab7vhswxfw" path="res://Models/Textures/Hair_Normal.png" id="2_mhgf7"]
+[ext_resource type="Texture2D" uid="uid://mh7fs7uaqoov" path="res://Models/Textures/Hair_Property.TGA" id="3_8f2y0"]
+[ext_resource type="Texture2D" uid="uid://c36t7vfra6lai" path="res://Models/Textures/ShiftTexture.png" id="4_xq8u1"]
+
+[resource]
+render_priority = 0
+shader = ExtResource("1_hhrku")
+shader_parameter/root_color = Color(0.494118, 0.368627, 0.290196, 1)
+shader_parameter/tip_color = Color(0.188235, 0.0980392, 0.0352941, 1)
+shader_parameter/primary_color = Color(0.701961, 0.454902, 0.282353, 1)
+shader_parameter/secondary_color = Color(1, 1, 1, 1)
+shader_parameter/primary_shift = -0.18
+shader_parameter/secondary_shift = 0.23
+shader_parameter/specular_power = 50.0
+shader_parameter/specular_width = 1.0
+shader_parameter/specular_scale = 0.155
+shader_parameter/specular_shift = ExtResource("4_xq8u1")
+shader_parameter/scatter = 3.0
+shader_parameter/use_diffuse_texture = null
+shader_parameter/property_tex = ExtResource("3_8f2y0")
+shader_parameter/hair_normal_map = ExtResource("2_mhgf7")

@@ -11,9 +11,14 @@ config_version=5
 [application]
 
 config/name="Marschner-Hair-Godot"
-run/main_scene="res://HairMarschner/HairDemo.tscn"
+run/main_scene="res://Scenes/HairDemo.tscn"
 config/features=PackedStringArray("4.1", "Forward Plus")
 config/icon="res://icon.svg"
+
+[display]
+
+window/stretch/mode="canvas_items"
+window/vsync/vsync_mode=0
 
 [rendering]
 
