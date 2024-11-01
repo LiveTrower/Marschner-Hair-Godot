@@ -17,6 +17,6 @@ shader_parameter/specular_power = 50.0
 shader_parameter/specular_width = 1.0
 shader_parameter/specular_scale = 0.155
 shader_parameter/specular_shift = ExtResource("3_615h3")
-shader_parameter/scatter = 3.0
+shader_parameter/scatter = 1.0
 shader_parameter/use_diffuse_texture = null
 shader_parameter/property_tex = ExtResource("2_ughb4")

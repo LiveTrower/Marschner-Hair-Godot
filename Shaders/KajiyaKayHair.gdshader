@@ -1,7 +1,7 @@
 shader_type spatial;
 render_mode cull_disabled;
 
-#include "HairBxDF.gdshaderinc"
+#include "KajiyaKay.gdshaderinc"
 
 group_uniforms Color;
 uniform vec3 root_color : source_color = vec3(0,0,0);
@@ -19,7 +19,7 @@ uniform float specular_width : hint_range(0, 1) = 0.5;
 uniform float specular_scale : hint_range(0, 1) = 0.3;
 
 group_uniforms Structural;
-uniform float scatter : hint_range(0.0, 5.0, 0.01) = 1.0;
+uniform float scatter : hint_range(0.0, 1.0, 0.01) = 1.0;
 uniform bool use_diffuse_texture;
 uniform sampler2D property_tex : hint_default_white;
 uniform sampler2D hair_normal_map : hint_roughness_normal;
@@ -50,8 +50,8 @@ void light()
 	vec3 V = normalize(VIEW);
 	vec3 L = normalize(LIGHT);
 
-	vec3 ambientdiffuse = getAmbientAndDiffuse(ALBEDO, scatter, N, L, V, 1.0);
-	vec3 specular = getSpecularKajiyaKay(shift_tex, primary_color, primary_shift, secondary_color, secondary_shift, N, B, V, L, specular_power, specular_width, specular_scale);
+	float ambientdiffuse = max(0.0, (dot(N, L) + ROUGHNESS) / ((1.0 + ROUGHNESS) * (1.0 + ROUGHNESS))) * (1.0 / PI) * scatter;
+	vec3 specular = specular_kajiya_kay(shift_tex, primary_color, primary_shift, secondary_color, secondary_shift, N, B, V, L, specular_power, specular_width, specular_scale);
 
 	DIFFUSE_LIGHT += ambientdiffuse * LIGHT_COLOR * ATTENUATION;
 	SPECULAR_LIGHT += specular * LIGHT_COLOR * ATTENUATION * SPECULAR_AMOUNT;
