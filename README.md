@@ -1,4 +1,4 @@
-# Marschner-Hair-Godot
-This shader is an implementation of the [Unity](https://github.com/maajor/Marschner-Hair-Unity) shader originally from Unreal but now for Godot.
+# Godot Hair Shading
+This shader is an adaptation for Godot of the implementation found at https://github.com/Scthe/frostbitten-hair-webgpu, which is based on the Unreal Engine implementation described in https://blog.selfshadow.com/publications/s2016-shading-course/karis/s2016_pbs_epic_hair.pdf.
 [![Screenshot.png](https://i.postimg.cc/NGSFZr2h/Screenshot.png)](https://postimg.cc/yWh7ZxTn)
-For now, this repository does not include the fur shader, only the Marschner shader and Kajiya Kay shader.
+This repository includes the Marschner BSDF (PBR solution) and the Kajiya-Kay BSDF (non-PBR solution).
